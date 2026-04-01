@@ -23,12 +23,6 @@ public class EventTrackerService {
     private final Set<String> liveEventIds = ConcurrentHashMap.newKeySet();
 
     @Autowired
-    private RetryableRestTemplate retryableRestTemplate;
-
-    @Autowired
-    private EventPublishingDataAssembler eventPublishingDataAssembler;
-
-    @Autowired
     private EventPublishingService eventPublishingService;
 
     @Autowired

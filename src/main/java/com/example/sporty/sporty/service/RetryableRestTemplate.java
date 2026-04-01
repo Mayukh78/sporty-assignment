@@ -28,7 +28,7 @@ public class RetryableRestTemplate {
     private String externalApiUrl;
 
     @Retryable(
-            retryFor = { ResourceAccessException.class, HttpServerErrorException.class, HttpClientErrorException.TooManyRequests.class },
+            retryFor = { ResourceAccessException.class, HttpServerErrorException.class},
             maxAttempts = 3,
             backoff = @Backoff(delay = 2000, multiplier = 2)
     )
