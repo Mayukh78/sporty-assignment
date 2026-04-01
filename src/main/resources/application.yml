@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: sporty
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      properties:
+        acks: all
+        enable-idempotence: true
+
+kafka:
+  events:
+    producer:
+      topic: events
+      timeout: 5000
+
+external:
+  api:
+    url: https://mayukhsporty.free.beeceptor.com/events/
