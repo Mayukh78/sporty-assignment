@@ -1,0 +1,43 @@
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+### Prerequisites
+
+You need to have maven,docker installed on your system.
+
+For installing docker and docker compose,follow official documentation.
+
+## Deployment
+
+First clone my repository, then move to project directory
+```
+cd sporty/
+```
+
+If you want, you can change the external url in src/main/resources/application.yml. Then run the following coomand ```./mvnw package && java -jar target/sporty-0.0.1-SNAPSHOT.jar```
+
+Then deploy the docker project using the following command
+```
+docker-compose up --build
+```
+
+Above command will up the kafka and spring boot service.
+
+## Implementation Logic
+As the implementation specifically mentions in-memory state, we haven't used any DBMS.
+For concurrency, we use concurrent Hash set to track which events are currently live. This data structure provides locking mechanism that we need.
+
+In our controller layer, we take request for event status update which either removes from this set(if status passed is NOT_LIVE) or add in this set(if status passed is LIVE).
+
+We have a scheduler running in our application which runs every 10 sec. This scheduler will iterate through event ids present in our set and will call external endpoint and will publish to kafka for each live event id.
+
+While calling external api, if it encounters ResourceAccessException or 5xx error and it will retry 3 times. This is achieved using @Retryable and @EnableRetry annotation. If after 3 times, there is any error we will not publish to kafka for that event.
+
+For external api, I am using a mock service called ```beeceptor.com``` . I have put ```mayukhsporty.free.beeceptor.com```.  But you can change this property. In application.yml, put your api in external.api.url prop.
+
+If we have multiple live events, we can process parallely instead of sequentially. This improves performance. I have used ThreadPoolTaskExecutor to achieve asynchronous processing. 
+
+
+While publishing to kafka, spring kafka takes care of retry. We have put enable.idempotence property as true so that in case kafka gets duplicate data, it can discard.
+
