@@ -42,3 +42,8 @@ For external api, I am using a mock service called ```beeceptor.com``` . I have 
 Publishing to kafka---
 We're running kafka in docker. While publishing to kafka, spring kafka takes care of retry. We have put enable.idempotence property as true so that in case kafka gets duplicate data, it can discard. Also we have set higher timeout for producer data.
 
+
+## AI usage
+I have used AI to build basic structure. But AI didn't generate concurrent hash set data structure, it provided only HashMap which is error-prone when there are concurrent request. Regarding scheduling, I have improved AI implmentation by adding async processing by adding ThreadPoolTaskExecutor. This transitioned the processing logic from a sequential bottleneck to an asynchronous execution model, allowing multiple live events to be processed in parallel. AI generated scheduler code which was very verbose, have improved it by adding proper annotations, thus increasing code readability.
+
+
