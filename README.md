@@ -40,10 +40,10 @@ While calling external api, if it encounters ResourceAccessException or 5xx erro
 For external api, I am using a mock service called ```beeceptor.com``` . I have put ```mayukhsporty.free.beeceptor.com\events\{eventId}```.  But you can change this property. In application.yml, put your api in external.api.url prop.
 
 Publishing to kafka---
-We're running kafka in docker. While publishing to kafka, spring kafka takes care of retry. We have put enable.idempotence property as true so that in case kafka gets duplicate data, it can discard. Also we have set higher timeout for producer data.
+Once we get data from external api, we assemble data to publish to kafka. If any execption occurs while assembling, we log it and move to next live event.We're running kafka in docker. While publishing to kafka, spring kafka takes care of retry. We have put enable.idempotence property as true so that in case kafka gets duplicate data, it can discard. Also we have set higher timeout for producer data.
+
+Have put proper log statements with proper severity level.
 
 
 ## AI usage
 I have used AI to build basic structure. But AI didn't generate concurrent hash set data structure, it provided only HashMap which is error-prone when there are concurrent request. Regarding scheduling, I have improved AI implmentation by adding async processing by adding ThreadPoolTaskExecutor. This transitioned the processing logic from a sequential bottleneck to an asynchronous execution model, allowing multiple live events to be processed in parallel. AI generated scheduler code which was very verbose, have improved it by adding proper annotations, thus increasing code readability.
-
-
